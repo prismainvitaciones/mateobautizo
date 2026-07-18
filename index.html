@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mateo · Su Bautizo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cielo: #EAF4FB;
+    --cielo-2: #DCEBF6;
+    --azul: #8FC6E8;
+    --azul-profundo: #2D5F7C;
+    --dorado: #E8C77E;
+    --dorado-2: #D9AE55;
+    --blanco: #FFFFFF;
+    --texto: #35505E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--cielo);
+    color: var(--texto);
+    overflow-x: hidden;
+  }
+
+  .display { font-family: 'Baloo 2', cursive; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- PANTALLA DE BIENVENIDA ---------- */
+  #welcomeOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px;
+    background: linear-gradient(180deg, #BFE0F5 0%, var(--cielo) 70%);
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  #welcomeOverlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .welcome-badge { font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--azul-profundo); margin-bottom: 16px; }
+  .welcome-title { font-size: clamp(1.7rem, 6vw, 2.4rem); color: var(--azul-profundo); margin-bottom: 10px; }
+  .welcome-sub { font-size: .92rem; color: var(--texto); max-width: 300px; margin-bottom: 30px; line-height: 1.6; }
+  .start-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 17px 38px; border-radius: 50px; border: none;
+    background: linear-gradient(90deg, var(--dorado-2), var(--dorado));
+    color: #4A3A12; font-family: 'Baloo 2', cursive; font-weight: 700; font-size: .95rem;
+    letter-spacing: .5px; cursor: pointer;
+    box-shadow: 0 8px 26px rgba(217,174,85,0.45);
+    animation: startPulse 2s ease-in-out infinite;
+  }
+  @keyframes startPulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.04);} }
+
+  /* ---------- NUBES DE FONDO FLOTANTES ---------- */
+  .cloud-field { position: fixed; inset: 0; height: 100vh; overflow: hidden; pointer-events: none; z-index: 3; }
+  .cloud { position: absolute; opacity: .8; animation: drift linear infinite; }
+  .cloud svg { display:block; }
+  .cloud.c1 { top: 8%;  width: 120px; animation-duration: 55s; }
+  .cloud.c2 { top: 22%; width: 80px;  animation-duration: 70s; animation-delay: 8s; }
+  .cloud.c3 { top: 65%; width: 100px; animation-duration: 60s; animation-delay: 3s; }
+  .cloud.c4 { top: 45%; width: 70px;  animation-duration: 80s; animation-delay: 15s; }
+  @keyframes drift {
+    0%   { transform: translateX(-140px); }
+    100% { transform: translateX(110vw); }
+  }
+
+  /* Chispas/estrellitas doradas */
+  .spark-field { position: fixed; inset: 0; height: 100vh; overflow: hidden; pointer-events: none; z-index: 4; }
+  .spark { position: absolute; top: -6vh; color: var(--dorado-2); font-size: 12px; opacity: 0; animation: sparkfall linear infinite; }
+  .spark:nth-child(1) { left: 10%; animation-duration: 14s; animation-delay: 0s; }
+  .spark:nth-child(2) { left: 30%; animation-duration: 18s; animation-delay: 4s; }
+  .spark:nth-child(3) { left: 55%; animation-duration: 16s; animation-delay: 2s; }
+  .spark:nth-child(4) { left: 75%; animation-duration: 20s; animation-delay: 6s; }
+  .spark:nth-child(5) { left: 90%; animation-duration: 15s; animation-delay: 8s; }
+  @keyframes sparkfall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    12% { opacity: .9; }
+    90% { opacity: .5; }
+    100% { transform: translateY(110vh) rotate(180deg); opacity: 0; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    background: linear-gradient(180deg, #CFE7F6 0%, var(--cielo) 55%);
+    overflow: hidden;
+  }
+  .hero-content { position: relative; z-index: 5; }
+
+  .cross-icon { width: 30px; height: 30px; margin: 0 auto 18px; color: var(--dorado-2); }
+
+  .eyebrow { font-size: .72rem; letter-spacing: 3px; text-transform: uppercase; color: var(--azul-profundo); margin-bottom: 10px; }
+
+  .hero-name {
+    font-size: clamp(2.6rem, 9vw, 4.6rem);
+    color: var(--azul-profundo);
+    line-height: 1.1;
+  }
+  .hero-tag { font-size: clamp(1rem, 3vw, 1.3rem); color: var(--dorado-2); margin: 8px 0 20px; }
+
+  .angel-frame {
+    width: min(78vw, 300px);
+    margin: 6px auto 22px;
+  }
+  .angel-frame svg { display: block; width: 100%; height: auto; }
+  .angel-frame img { display: block; width: 100%; height: auto; border-radius: 20px; }
+
+  .hero-date { font-family: 'Baloo 2', cursive; font-size: 1.05rem; color: var(--azul-profundo); letter-spacing: 1px; }
+  .hero-place { font-size: .82rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--texto); margin-top: 4px; opacity: .8; }
+
+  .scroll-cue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--azul-profundo); opacity: .55; z-index: 5; }
+  .scroll-cue::after { content:''; display:block; margin:8px auto 0; width:1px; height:30px; background: linear-gradient(var(--dorado-2), transparent); animation: dropdown 2.2s ease-in-out infinite; }
+  @keyframes dropdown { 0%{opacity:1; transform:scaleY(1);} 100%{opacity:0; transform:scaleY(.2) translateY(20px);} }
+
+  /* ---------- SECCIONES ---------- */
+  section { padding: 90px 24px; position: relative; z-index: 2; }
+  .section-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+  .section-eyebrow { font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--dorado-2); margin-bottom: 12px; }
+  .section-title { font-family: 'Baloo 2', cursive; font-size: clamp(1.6rem, 4.5vw, 2.2rem); color: var(--azul-profundo); margin-bottom: 26px; }
+  .cloud-divider { width: 90px; height: 3px; margin: 0 auto 34px; background: linear-gradient(90deg, var(--azul), var(--dorado)); border-radius: 4px; }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ---------- MENSAJE ---------- */
+  #mensaje { background: var(--blanco); }
+  .mensaje-text { font-size: clamp(1.05rem, 2.4vw, 1.25rem); line-height: 1.8; color: var(--texto); margin-bottom: 40px; }
+  .padres-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+  .padres-eyebrow { font-size: .66rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dorado-2); margin-bottom: 8px; }
+  .padres-nombre { font-family: 'Baloo 2', cursive; font-size: 1.05rem; color: var(--azul-profundo); line-height: 1.5; }
+  @media (max-width: 540px) { .padres-grid { grid-template-columns: 1fr; gap: 24px; } }
+
+  /* ---------- COUNTDOWN ---------- */
+  #countdown { background: linear-gradient(180deg, var(--cielo-2), var(--cielo)); }
+  .countdown-grid { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+  .count-box { width: 84px; height: 84px; border-radius: 20px; background: var(--blanco); box-shadow: 0 8px 22px rgba(45,95,124,0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .count-num { font-family: 'Baloo 2', cursive; font-size: 1.7rem; color: var(--azul-profundo); }
+  .count-label { font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dorado-2); margin-top: 3px; }
+
+  /* ---------- PADRINOS ---------- */
+  #padrinos { background: var(--blanco); }
+  .padrinos-grid { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-top: 10px; }
+  .padrino-rol { font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dorado-2); margin-bottom: 8px; }
+  .padrino-nombre { font-family: 'Baloo 2', cursive; font-size: 1.15rem; color: var(--azul-profundo); }
+
+  /* ---------- ITINERARIO ---------- */
+  #itinerario { background: linear-gradient(180deg, var(--cielo-2), var(--cielo)); }
+  .timeline { margin-top: 36px; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .tl-item { display: grid; grid-template-columns: 78px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px dashed rgba(45,95,124,0.2); }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-time { font-family: 'Baloo 2', cursive; color: var(--dorado-2); font-size: .9rem; padding-top: 2px; }
+  .tl-name { color: var(--azul-profundo); font-weight: 700; font-size: .93rem; }
+  .tl-place { color: var(--texto); font-size: .8rem; margin-top: 2px; opacity: .8; }
+
+  /* ---------- VESTIMENTA ---------- */
+  #vestimenta { background: var(--blanco); }
+  .vestimenta-text { font-size: .95rem; line-height: 1.8; color: var(--texto); margin: 22px 0 28px; }
+  .vestimenta-text b { color: var(--azul-profundo); }
+  .swatches { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: .65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--texto); }
+  .swatch-dot { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(45,95,124,0.15); }
+
+  /* ---------- RSVP ---------- */
+  #rsvp { background: linear-gradient(180deg, var(--cielo-2), var(--cielo)); }
+  .rsvp-btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 28px;
+    padding: 16px 36px; border-radius: 50px;
+    background: var(--azul-profundo); color: var(--blanco); text-decoration: none;
+    font-family: 'Baloo 2', cursive; font-size: .9rem; letter-spacing: .5px; font-weight: 600;
+    box-shadow: 0 10px 26px rgba(45,95,124,0.28);
+    transition: transform .25s ease;
+  }
+  .rsvp-btn:hover { transform: translateY(-3px); }
+  .rsvp-note { margin-top: 16px; font-size: .78rem; color: var(--texto); opacity: .8; }
+  .rsvp-illustration { width: min(50vw, 160px); margin: 8px auto 0; }
+  .rsvp-illustration img { display: block; width: 100%; height: auto; }
+
+  footer { padding: 50px 24px 90px; text-align: center; background: var(--cielo); }
+  .footer-name { font-family: 'Baloo 2', cursive; font-size: 1rem; color: var(--azul-profundo); margin-bottom: 6px; }
+  footer p.tag { font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--texto); opacity: .6; }
+
+  /* ---------- MÚSICA ---------- */
+  .music-btn {
+    position: fixed; bottom: 24px; right: 24px; width: 54px; height: 54px; border-radius: 50%;
+    border: 1px solid var(--dorado-2); background: var(--blanco); color: var(--azul-profundo);
+    font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    z-index: 50; box-shadow: 0 6px 18px rgba(45,95,124,0.2);
+  }
+  .music-btn.playing { animation: spin 6s linear infinite; }
+  @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+</style>
+</head>
+<body>
+
+<!-- Pantalla de bienvenida -->
+<div id="welcomeOverlay">
+  <p class="welcome-badge">✦ Con la bendición de Dios ✦</p>
+  <h2 class="welcome-title display">Mateo será bautizado</h2>
+  <p class="welcome-sub">Toca el botón para entrar a la invitación y activar la música 🎵</p>
+  <button class="start-btn" id="startBtn"><span>🕊️</span> Toca para comenzar</button>
+</div>
+
+<!-- Nubes flotantes de fondo -->
+<div class="cloud-field" aria-hidden="true">
+  <div class="cloud c1"><svg viewBox="0 0 120 60"><path d="M15,45 Q0,45 0,32 Q0,18 15,18 Q18,4 38,4 Q58,4 62,18 Q80,15 84,30 Q100,28 100,42 Q100,50 88,50 L15,50 Z" fill="#FFFFFF" opacity="0.9"/></svg></div>
+  <div class="cloud c2"><svg viewBox="0 0 120 60"><path d="M15,45 Q0,45 0,32 Q0,18 15,18 Q18,4 38,4 Q58,4 62,18 Q80,15 84,30 Q100,28 100,42 Q100,50 88,50 L15,50 Z" fill="#FFFFFF" opacity="0.8"/></svg></div>
+  <div class="cloud c3"><svg viewBox="0 0 120 60"><path d="M15,45 Q0,45 0,32 Q0,18 15,18 Q18,4 38,4 Q58,4 62,18 Q80,15 84,30 Q100,28 100,42 Q100,50 88,50 L15,50 Z" fill="#FFFFFF" opacity="0.85"/></svg></div>
+  <div class="cloud c4"><svg viewBox="0 0 120 60"><path d="M15,45 Q0,45 0,32 Q0,18 15,18 Q18,4 38,4 Q58,4 62,18 Q80,15 84,30 Q100,28 100,42 Q100,50 88,50 L15,50 Z" fill="#FFFFFF" opacity="0.75"/></svg></div>
+</div>
+
+<!-- Chispas doradas -->
+<div class="spark-field" aria-hidden="true">
+  <span class="spark">✦</span><span class="spark">✦</span><span class="spark">✦</span><span class="spark">✦</span><span class="spark">✦</span>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-content">
+    <svg class="cross-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M11,2 L13,2 L13,10 L21,10 L21,12 L13,12 L13,22 L11,22 L11,12 L3,12 L3,10 L11,10 Z"/></svg>
+    <p class="eyebrow">Nuestro pequeño tesoro</p>
+    <h1 class="hero-name display">Mateo</h1>
+    <p class="hero-tag display">será bautizado</p>
+
+    <!-- Ilustración: "Mi Bautizo" (imagen proporcionada por el cliente) -->
+    <div class="angel-frame">
+      <img src="imagen1.jpg" alt="Mi Bautizo - Mateo">
+    </div>
+
+    <p class="hero-date display">6 de septiembre · 2026</p>
+    <p class="hero-place">Ciudad de México</p>
+  </div>
+  <p class="scroll-cue">Desliza para ver más</p>
+</section>
+
+<!-- ================= MENSAJE ================= -->
+<section id="mensaje">
+  <div class="section-inner reveal">
+    <p class="mensaje-text">
+      "Con el corazón lleno de alegría y gratitud a Dios, queremos compartir contigo el
+      día en que nuestro pequeño Mateo recibirá el sacramento del bautismo. Tu presencia
+      hará este momento aún más especial."
+    </p>
+    <div class="padres-grid">
+      <div>
+        <p class="padres-eyebrow">Papás</p>
+        <p class="padres-nombre">Diego Hernández Paredes<br>Camila Reyes de Hernández</p>
+      </div>
+      <div>
+        <p class="padres-eyebrow">Celebra</p>
+        <p class="padres-nombre">Parroquia San Rafael<br>Arcángel</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COUNTDOWN ================= -->
+<section id="countdown">
+  <div class="section-inner reveal">
+    <p class="section-eyebrow">Falta muy poco</p>
+    <h2 class="section-title">Cuenta regresiva</h2>
+    <div class="cloud-divider"></div>
+    <div class="countdown-grid">
+      <div class="count-box"><span class="count-num" id="cd-days">00</span><span class="count-label">Días</span></div>
+      <div class="count-box"><span class="count-num" id="cd-hours">00</span><span class="count-label">Hrs</span></div>
+      <div class="count-box"><span class="count-num" id="cd-min">00</span><span class="count-label">Min</span></div>
+      <div class="count-box"><span class="count-num" id="cd-sec">00</span><span class="count-label">Seg</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PADRINOS ================= -->
+<section id="padrinos">
+  <div class="section-inner reveal">
+    <p class="section-eyebrow">Sus guías espirituales</p>
+    <h2 class="section-title">Padrinos</h2>
+    <div class="cloud-divider"></div>
+    <div class="padrinos-grid">
+      <div><p class="padrino-rol">Padrino</p><p class="padrino-nombre">Julián Reyes</p></div>
+      <div><p class="padrino-rol">Madrina</p><p class="padrino-nombre">Ana Sofía Paredes</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ITINERARIO ================= -->
+<section id="itinerario">
+  <div class="section-inner reveal">
+    <p class="section-eyebrow">El gran día</p>
+    <h2 class="section-title">Itinerario</h2>
+    <div class="cloud-divider"></div>
+    <div class="timeline">
+      <div class="tl-item"><span class="tl-time">12:00 pm</span><div><p class="tl-name">Misa de bautizo</p><p class="tl-place">Parroquia San Rafael Arcángel</p></div></div>
+      <div class="tl-item"><span class="tl-time">1:30 pm</span><div><p class="tl-name">Recepción</p><p class="tl-place">Salón Jardín del Ángel</p></div></div>
+      <div class="tl-item"><span class="tl-time">2:00 pm</span><div><p class="tl-name">Comida</p><p class="tl-place">Salón Jardín del Ángel</p></div></div>
+      <div class="tl-item"><span class="tl-time">3:30 pm</span><div><p class="tl-name">Corte de pastel</p><p class="tl-place">Celebramos a Mateo</p></div></div>
+      <div class="tl-item"><span class="tl-time">4:30 pm</span><div><p class="tl-name">Piñata &amp; juegos</p><p class="tl-place">Zona infantil</p></div></div>
+      <div class="tl-item"><span class="tl-time">6:00 pm</span><div><p class="tl-name">Cierre</p><p class="tl-place">Gracias por acompañarnos</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VESTIMENTA ================= -->
+<section id="vestimenta">
+  <div class="section-inner reveal">
+    <p class="section-eyebrow">Código de vestimenta</p>
+    <h2 class="section-title">Casual elegante</h2>
+    <div class="cloud-divider"></div>
+    <p class="vestimenta-text">
+      Nos encantaría verte con colores claros y suaves. Te pedimos amablemente
+      <b>evitar el blanco</b>, color reservado para nuestro pequeño Mateo.
+    </p>
+    <div class="swatches">
+      <div class="swatch"><span class="swatch-dot" style="background:#8FC6E8"></span>Azul cielo</div>
+      <div class="swatch"><span class="swatch-dot" style="background:#E8C77E"></span>Dorado</div>
+      <div class="swatch"><span class="swatch-dot" style="background:#DCEBF6"></span>Celeste claro</div>
+      <div class="swatch"><span class="swatch-dot" style="background:#F7B7A3"></span>Durazno</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RSVP ================= -->
+<section id="rsvp">
+  <div class="section-inner reveal">
+    <p class="section-eyebrow">Tu presencia es una bendición</p>
+    <h2 class="section-title">Confirma tu asistencia</h2>
+    <div class="cloud-divider"></div>
+    <div class="rsvp-illustration"><img src="imagen2.jpg" alt="Angelito"></div>
+    <a href="https://wa.me/525500000000?text=Hola!%20Confirmo%20mi%20asistencia%20al%20bautizo%20de%20Mateo%20%F0%9F%95%8A%EF%B8%8F" target="_blank" class="rsvp-btn">Confirmar por WhatsApp</a>
+    <p class="rsvp-note">Antes del 25 de agosto de 2026</p>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-name display">Mateo · Su Bautizo</p>
+  <p class="tag">6 de septiembre de 2026</p>
+</footer>
+
+<!-- Reproductor de música de fondo -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+<button class="music-btn" id="musicToggle" aria-label="Reproducir música">🎵</button>
+
+<script>
+  // Cuenta regresiva
+  var evento = new Date('2026-09-06T12:00:00');
+  function tick() {
+    var now = new Date();
+    var diff = evento - now;
+    if (diff < 0) diff = 0;
+    var d = Math.floor(diff / (1000*60*60*24));
+    var h = Math.floor((diff / (1000*60*60)) % 24);
+    var m = Math.floor((diff / (1000*60)) % 60);
+    var s = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-min').textContent   = String(m).padStart(2,'0');
+    document.getElementById('cd-sec').textContent   = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Reveal on scroll
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+  // Música de fondo
+  var audio = document.getElementById('bgMusic');
+  var musicBtn = document.getElementById('musicToggle');
+  var playing = false;
+
+  function startMusic() {
+    audio.play().then(function(){ playing = true; musicBtn.classList.add('playing'); })
+      .catch(function(err){ console.warn('No se pudo reproducir la música:', err); });
+  }
+
+  musicBtn.addEventListener('click', function () {
+    if (playing) { audio.pause(); musicBtn.classList.remove('playing'); playing = false; }
+    else { startMusic(); }
+  });
+
+  var overlay = document.getElementById('welcomeOverlay');
+  var startBtn = document.getElementById('startBtn');
+  startBtn.addEventListener('click', function () {
+    overlay.classList.add('hidden');
+    startMusic();
+  });
+</script>
+
+</body>
+</html>
